@@ -15,6 +15,16 @@ const loadVideos = () => {
     .catch((error) => console.error("Failed to load videos", error));
 };
 
+// Time
+function getTime(value) {
+  const hr = parseInt(value / 3600);
+  const remaining_second = value % 3600;
+  const min = parseInt(remaining_second / 60);
+  const sec = remaining_second % 60;
+
+  return `${hr}hr ${min}min ${sec}sec ago`;
+}
+
 // Display Categories
 const displayCategories = (categories) => {
   const categoryContainer = document.getElementById("categories");
@@ -60,15 +70,22 @@ const displayVideos = (videos) => {
     console.log(video);
     const card = document.createElement("div");
     card.classList = "card card-compact";
+
     card.innerHTML = `
         <figure class = "h-[200px] relative">
             <img
             src=${video.thumbnail}
             class = "h-full w-full object-cover"
             alt="Shoes" />
-            <span class="absolute right-2 bottom-2 bg-black text-white rounded p-1">${
-              video.others.posted_date
-            }</span>
+
+            ${
+              video.others.posted_date?.length === 0
+                ? ""
+                : `<span class="absolute right-2 bottom-2 bg-black text-white rounded p-1">${getTime(
+                    video.others.posted_date
+                  )}</span>`
+            }
+            
         </figure>
         <div class="px-0 py-2 flex gap-2">
             <div><img class ="w-10 h-10 rounded-full object-cover" src=${
