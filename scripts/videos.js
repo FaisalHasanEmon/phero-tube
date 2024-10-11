@@ -15,6 +15,14 @@ const loadVideos = () => {
     .catch((error) => console.error("Failed to load videos", error));
 };
 
+// Load Category
+const loadCategoryVideo = (id) => {
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then((res) => res.json())
+    .then((data) => displayVideos(data.category))
+    .catch((error) => console.error("Failed to load videos", error));
+};
+
 // Time
 function getTime(value) {
   const hr = parseInt(value / 3600);
@@ -24,22 +32,6 @@ function getTime(value) {
 
   return `${hr}hr ${min}min ${sec}sec ago`;
 }
-
-// Display Categories
-const displayCategories = (categories) => {
-  const categoryContainer = document.getElementById("categories");
-
-  categories.forEach((item) => {
-    // console.log(item);
-    // Create a button
-    const button = document.createElement("button");
-    button.classList = "btn";
-    button.innerText = item.category;
-
-    // Add button
-    categoryContainer.append(button);
-  });
-};
 
 /** 
 const demoObj = {
@@ -66,6 +58,7 @@ const demoObj = {
 // Display Videos
 const displayVideos = (videos) => {
   const videoContainer = document.getElementById("videos");
+  videoContainer.innerHTML = "";
   videos.forEach((video) => {
     console.log(video);
     const card = document.createElement("div");
@@ -81,7 +74,7 @@ const displayVideos = (videos) => {
             ${
               video.others.posted_date?.length === 0
                 ? ""
-                : `<span class="absolute right-2 bottom-2 bg-black text-white rounded p-1">${getTime(
+                : `<span class="absolute text-xs right-2 bottom-2 bg-black text-white rounded p-1">${getTime(
                     video.others.posted_date
                   )}</span>`
             }
@@ -107,6 +100,24 @@ const displayVideos = (videos) => {
         </div>
     `;
     videoContainer.append(card);
+  });
+};
+
+// Display Categories
+const displayCategories = (categories) => {
+  const categoryContainer = document.getElementById("categories");
+
+  categories.forEach((item) => {
+    // console.log(item);
+    // Create a button
+    const buttonContainer = document.createElement("div");
+    buttonContainer.innerHTML = `
+    <button class="btn" onclick="loadCategoryVideo(${item.category_id})">${item.category}</button>
+    `;
+    // buttonContainer.innerText = item.category;
+
+    // Add button
+    categoryContainer.append(buttonContainer);
   });
 };
 
