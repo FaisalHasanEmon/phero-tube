@@ -15,11 +15,23 @@ const loadVideos = () => {
     .catch((error) => console.error("Failed to load videos", error));
 };
 
+function removeActiveClass() {
+  const buttons = document.getElementsByClassName("category-btn");
+  for (const button of buttons) {
+    button.classList.remove("active");
+  }
+}
+
 // Load Category
 const loadCategoryVideo = (id) => {
   fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
     .then((res) => res.json())
-    .then((data) => displayVideos(data.category))
+    .then((data) => {
+      const activeBtn = document.getElementById(`btn-${id}`);
+      removeActiveClass();
+      activeBtn.classList.add("active");
+      displayVideos(data.category);
+    })
     .catch((error) => console.error("Failed to load videos", error));
 };
 
@@ -126,7 +138,7 @@ const displayCategories = (categories) => {
     // Create a button
     const buttonContainer = document.createElement("div");
     buttonContainer.innerHTML = `
-    <button class="btn" onclick="loadCategoryVideo(${item.category_id})">${item.category}</button>
+    <button id="btn-${item.category_id}" onclick="loadCategoryVideo(${item.category_id})" class="btn category-btn">${item.category}</button>
     `;
     // buttonContainer.innerText = item.category;
 
