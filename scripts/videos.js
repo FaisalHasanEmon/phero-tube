@@ -8,8 +8,10 @@ const loadCategories = () => {
     .catch((error) => console.error("Failed to load data", error));
 };
 // Loading Videos
-const loadVideos = () => {
-  fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+const loadVideos = (searchText = "") => {
+  fetch(
+    `https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`
+  )
     .then((res) => res.json())
     .then((data) => displayVideos(data.videos))
     .catch((error) => console.error("Failed to load videos", error));
@@ -45,6 +47,28 @@ function getTime(value) {
   return `${hr}hr ${min}min ${sec}sec ago`;
 }
 
+// Loading Details
+const loadDetails = async (videoId) => {
+  const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`;
+  const res = await fetch(uri);
+  const data = await res.json();
+  displayDetails(data.video);
+};
+
+const displayDetails = (video) => {
+  // console.log(video);
+  const detailsContainer = document.getElementById("modal-content");
+  detailsContainer.innerHTML = `
+  <img src=${video.thumbnail}/>
+  <p>${video.description} </p>
+  
+  `;
+  // Way-1 showing modal
+  // document.getElementById("showModalData").click();
+
+  // Way-2 showing modal
+  document.getElementById("customModal").showModal();
+};
 /** 
 const demoObj = {
   category_id: "1001",
@@ -86,7 +110,7 @@ const displayVideos = (videos) => {
     videoContainer.classList.add("grid");
   }
   videos.forEach((video) => {
-    console.log(video);
+    // console.log(video);
     const card = document.createElement("div");
     card.classList = "card card-compact";
 
@@ -109,7 +133,8 @@ const displayVideos = (videos) => {
         <div class="px-0 py-2 flex gap-2">
             <div><img class ="w-10 h-10 rounded-full object-cover" src=${
               video.authors[0].profile_picture
-            } /></div>
+            } />
+            </div>
             <div>
                 <h2 class = "font-bold">${video.title}</h2>
                 <div class="flex items-center gap-2">
@@ -122,6 +147,9 @@ const displayVideos = (videos) => {
                         : ""
                     }
                 </div>
+                <p> <button onclick="loadDetails('${
+                  video.video_id
+                }')" class="btn btn-sm btn-error">Details</button> </p>
             </div>
         </div>
     `;
@@ -147,5 +175,8 @@ const displayCategories = (categories) => {
   });
 };
 
+document.getElementById("search-input").addEventListener("keyup", (e) => {
+  loadVideos(e.target.value);
+});
 loadCategories();
 loadVideos();
